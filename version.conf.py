@@ -26,7 +26,7 @@ def stop():
                         stopped = True
                         return
         except:
-            typed_string = ""  #
+            typed_string = ""  # String composed of chracters typed by the users (only the one of the stop_word)
 
 def create_new_window():
     window = Tk()
