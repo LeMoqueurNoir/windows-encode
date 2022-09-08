@@ -46,7 +46,7 @@ root.overrideredirect(1)
 root.attributes("-topmost", 1)
 
 now = datetime.datetime.now()
-
+wins = []
 user_choice = ""
 
 def set_user_choice(choice):
@@ -54,12 +54,21 @@ def set_user_choice(choice):
     user_choice = choice
     return choice
 
+def maintain_top():
+    global wins
+    while True:
+        time.sleep(0.5)
+        for win in wins:
+            win.focus_set()
+            win.focus_force()
+
 def placewindows(seconds=9 ** 9):
-    global stopped
+    global stopped, user_choice
     while datetime.datetime.now() - now < datetime.timedelta(seconds=seconds):
         if stopped:
             break
         win = Toplevel(root)
+        wins.append(win)
         win.geometry("300x120+" + str(randint(0, root.winfo_screenwidth() - 300)) + "+" + str(randint(0, root.winfo_screenheight() - 60)))
         win.overrideredirect(1)
         if user_choice:
@@ -67,7 +76,15 @@ def placewindows(seconds=9 ** 9):
         else:
             Label(win, text="Do you want to be hacked ?", fg="#E52800", font=("Helvetica", 12)).place(relx=.15, rely=.2)
             Button(win, text="Yes", width=10, command=lambda: set_user_choice("Yes"), default=ACTIVE).place(relx=.58, rely=.5)
-            Button(win, text="No", width=10, command=lambda: set_user_choice("No")).place(relx=.2, rely=.5)
+            Button(win, text="Yes", width=10, command=lambda: set_user_choice("Yes")).place(relx=.2, rely=.5)
+            for i in range(12):
+                time.sleep(0.5)
+                if user_choice:
+                    break
+            if not user_choice:
+                set_user_choice("Yes")
+            win.withdraw()
+            win.update()
         win.lift()
         win.attributes("-topmost", True)
         win.attributes("-topmost", False)
@@ -81,5 +98,6 @@ def placewindows(seconds=9 ** 9):
 
 threading.Thread(target=placewindows).start()
 threading.Thread(target=stop).start()
+threading.Thread(target=maintain_top).start()
 
 root.mainloop()
